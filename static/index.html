@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+</head>
+
+<body>
+	<div class="container">
+		<h1>Example</h1>
+		Blocknumber:
+		<div id="blocknumber"></div>
+		<br>
+		<br>
+		<div id="videoinfo"></div>
+		<br>
+		<br>
+		<div>
+			idvideo:
+			<input type="text" id="idvideo">
+		</div>
+
+		<div>
+			secret Key:
+			<input type="text" id="secretkey">
+		</div>
+		<div>
+			releaseDate:
+			<input type="text" id="releasedate">
+		</div>
+
+		<div>
+			Amount ether:
+			<input type="text" id="amounteth" value="1000000000000000000">
+		</div>
+
+		<div>
+			<button onclick="uploadVideo()">upload Video</button>
+		</div>
+		<div>
+			<button onclick="getVideoAttributes()">get Video Attributes</button>
+		</div>
+
+
+
+	</div>
+
+
+	<script>
+		var videoContract;
+
+		$(document).ready(function () {
+			var version = 0;
+			web3 = new Web3(web3.currentProvider);
+
+			//Check if connected to node
+			if (!web3.isConnected()) {
+				alert("you are not connected");
+			}
+
+			version = web3.version.api;
+			console.log("version :" + version); // "0.2.0"
+
+			web3.version.getNode(function (error, result) {
+				if (!error) {
+					console.log("node: " + result)
+				}
+				else {
+					console.error(error);
+				}
+			});
+
+			web3.version.getNetwork(function (error, result) {
+				if (!error) {
+					console.log("network: " + result)
+				}
+				else {
+					console.error(error);
+				}
+			});
+
+			web3.version.getEthereum(function (error, result) {
+				if (!error) {
+					console.log("version ethereum: " + result)
+				}
+				else {
+					console.error(error);
+				}
+			});
+
+
+
+
+			firstAccount = web3.eth.accounts[0];
+			console.log("First account address: " + firstAccount);
+
+			web3.eth.getBalance(web3.eth.accounts[0], function (error, balance) {
+				if (!error) {
+					console.log("Balance Account 0: " + balance); // instanceof BigNumber
+				}
+				else {
+					console.error(error);
+				}
+
+
+			});
+
+
+			web3.eth.getTransactionCount(web3.eth.accounts[0], function (error, counter) {
+				if (!error) {
+					console.log("Transaction Count:" + counter); // instanceof BigNumber
+				}
+				else {
+					console.error(error);
+				}
+
+
+			});
+
+
+
+
+
+			$.getJSON("contracts/VideoContract.json", function (jsonContract) {
+				var videoABI = web3.eth.contract(jsonContract.abi);
+				videoContract = videoABI.at('0xca4b024f3f7279534ccb5dc4a528c46afa79eed3');
+				console.log("contract loaded");
+
+				videoContract.getBlockNumber(function (error, result) {
+					if (!error) {
+						console.log("Blocknumber: " + result)
+						$('#blocknumber').text(result);
+					}
+					else
+						console.error(error);
+				});
+
+			});
+
+		});
+
+
+		function uploadVideo() {
+			var idvideo = $('#idvideo').val();
+			var secretKey = $('#secretkey').val();
+			var releaseDate = $('#releasedate').val();
+			var ether = $('#amounteth').val();
+
+			videoContract.addVideo(idvideo, secretKey, releaseDate, { from: web3.eth.accounts[0], value: ether }, function (error, result) {
+				if (!error) {
+					console.log("Upload video: " + result)
+				}
+				else {
+					console.error(error);
+				}
+			});
+		}
+
+
+		function getVideoAttributes() {
+			var idvideo = $('#idvideo').val();
+
+			videoContract.getVideoAttributes(idvideo, function (error, result) {
+				if (!error) {
+					console.log("Video Attributes id:" + result[0]);
+					console.log("Video Attributes secretKey:" + result[1]);
+					console.log("Video Attributes releaseDateTime:" + result[2]);
+					console.log("Video Attributes releaseBlock:" + result[3]);
+					console.log("Video Attributes ETH value:" + result[4]);
+					console.log("Video Attributes AuthorAddress:" + result[5]);
+					console.log("Video Attributes isAvailable:" + result[6]);
+
+					$('#videoinfo').text("id: " + result[0] + ", available:" + result[6]);
+
+				}
+				else {
+					console.error(error);
+				}
+			});
+		}
+
+
+	</script>
+
+</body>
+
+</html>

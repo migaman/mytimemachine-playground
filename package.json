@@ -1,0 +1,19 @@
+{
+  "name": "mytimemachine-playground",
+  "version": "0.0.1",
+  "private": true,
+  "description": "contract playground for mytimemachine",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/migaman/mytimemachine-playground.git"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "migaman",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "web3": "^1.0.0-beta.35"
+  }
+}
