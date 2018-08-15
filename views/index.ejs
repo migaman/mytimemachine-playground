@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>
+    <%= title %>
+  </title>
+</head>
+
+
+
+<body>
+  <div>
+    <!--Save address variable to js variable-->
+    <script>var local_address = '<%= address %>'; </script> Contract Address:
+    <%= address %>
+  </div>
+
+
+  <div class="container">
+    <h1>Example</h1>
+    Blocknumber:
+    <div id="blocknumber"></div>
+    <br>
+    <br>
+    <div id="videoinfo"></div>
+    <br>
+    <br>
+    <div>
+      idvideo:
+      <input type="text" id="idvideo">
+    </div>
+
+    <div>
+      secret Key:
+      <input type="text" id="secretkey">
+    </div>
+    <div>
+      releaseDate:
+      <input type="text" id="releasedate">
+    </div>
+
+    <div>
+      Amount ether:
+      <input type="text" id="amounteth" value="1000000000000000000">
+    </div>
+
+    <div>
+      <button onclick="uploadVideo()">upload Video</button>
+    </div>
+    <div>
+      <button onclick="getVideoAttributes()">get Video Attributes</button>
+    </div>
+    <div>
+      <button onclick="releaseVideo()">Release Video</button>
+    </div>
+
+
+
+  </div>
+
+  <script src="/javascripts/web3.min.js"></script>
+  <script src="/javascripts/jquery-3.3.1.min.js"></script>
+  <script src="/javascripts/example.js"></script>
+</body>
+
+
+
+
+
+
+</html>
