@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function (app) {
-	var videoList = require('../controllers/videoController');
+	var videoList = require.main.require('./api/controllers/videoController');
 
 	app.route('/api/videos')
 		.get(videoList.list_all);
