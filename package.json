@@ -17,7 +17,8 @@
     "ejs": "^2.6.1",
     "env2": "^2.2.2",
     "express": "^4.16.3",
-    "web3": "^1.0.0-beta.35"
+    "schema-object": "^4.0.11",
+    "web3": "^0.20.7"
   },
   "devDependencies": {
     "truffle": "^4.1.14"
