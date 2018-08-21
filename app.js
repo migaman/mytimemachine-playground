@@ -2,6 +2,8 @@ require('env2')('.env');
 var fs = require('fs');
 var express = require('express');
 var bodyparser = require('body-parser');
+var session = require('express-session');
+var flash = require('express-flash');
 var app = express();
 
 var routeAPIVideos = require('./api/routes/videoroutes');
@@ -18,12 +20,26 @@ app.use(function (req, res, next) {
 app.use(express.static('./static'));
 app.use('/contracts', express.static('./build/contracts'));
 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  saveUninitialized: true,
+  resave: false
+}));
+
+
+app.use(flash());
+
+
 routeAPIVideos(app);
 
 
 app.get('/', function (req, res) {
+  req.flash('info', 'This is a flash info message using the express-flash module.');
+  req.flash('error', 'This is a flash error message using the express-flash module.');
+  req.flash('success', 'This is a flash success message using the express-flash module.');
   res.render('index', { title: 'Example Page', address: EXAMPLE_ADDRESS, releaseversion: VERSION });
 });
+
 
 
 
