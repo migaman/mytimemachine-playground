@@ -1,3 +1,5 @@
+'use strict';
+
 var videoContract;
 
 $(document).ready(function () {
@@ -6,7 +8,7 @@ $(document).ready(function () {
 
 	//Check if connected to node
 	if (!web3.isConnected()) {
-		alert("you are not connected");
+		console.log("you are not connected");
 	}
 
 	version = web3.version.api;
@@ -42,7 +44,7 @@ $(document).ready(function () {
 
 
 
-	firstAccount = web3.eth.accounts[0];
+	var firstAccount = web3.eth.accounts[0];
 	console.log("First account address: " + firstAccount);
 
 	web3.eth.getBalance(web3.eth.accounts[0], function (error, balance) {
@@ -142,7 +144,7 @@ function getVideoAttributesServerside() {
 
 function releaseVideo() {
 	var idvideo = $('#idvideo').val();
-	alert("todo!!");
+	console.log("todo!!" + idvideo);
 
 }
 

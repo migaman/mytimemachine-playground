@@ -1,0 +1,5 @@
+node_modules/*
+/static/javascripts/*.min.js
+/static/javascripts/web3.js
+migrations/*
+truffle.js

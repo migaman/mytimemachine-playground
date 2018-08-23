@@ -1,0 +1,21 @@
+{
+  "extends": "eslint:recommended",
+  "env": {
+    "browser": true,
+    "node": true,
+    "jquery": true,
+    "es6": true
+  },
+  "globals": {
+    "Web3": false,
+    "web3": true,
+    "local_address": false
+  },
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "rules": {
+    "no-mixed-spaces-and-tabs": 2,
+    "strict": 2 // require or disallow strict mode directives
+  }
+}

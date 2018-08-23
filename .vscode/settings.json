@@ -1,0 +1,7 @@
+{
+	"search.exclude": {
+		"**/static/javascripts": true,
+		"**/static/stylesheets": true,
+		"**/static/webfonts": true,
+	},
+}

@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node app.js",
-    "postinstall": "truffle compile"
+    "postinstall": "truffle compile",
+    "lint": "eslint \"**/*.js\""
   },
   "author": "migaman",
   "dependencies": {
@@ -19,10 +20,12 @@
     "express": "^4.16.3",
     "express-flash": "0.0.2",
     "express-session": "^1.15.6",
+    "log4js": "^3.0.5",
     "schema-object": "^4.0.11",
     "web3": "^0.20.7"
   },
   "devDependencies": {
+    "eslint": "^5.4.0",
     "truffle": "^4.1.14"
   }
 }

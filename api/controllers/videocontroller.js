@@ -53,7 +53,7 @@ exports.list_all = function (req, res) {
 	video.videotag = "blockchain";
 	videos.push(video);
 
-	var video = new videomodel();
+	video = new videomodel();
 	video.idvideo = 2;
 	video.videoname = "Further steps with ethereum";
 	video.videotag = "blockchain";
