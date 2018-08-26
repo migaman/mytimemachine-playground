@@ -13,51 +13,44 @@
         <!--Save address variable to js variable-->
         <script>var local_address = '<%= address %>'; </script> Contract Address:
         <br>
-        <br>
         <%= address %>
-          <br> Blocknumber:
-          <div id="blocknumber"></div>
-          <br>
-          <br>
-          <div id="videoinfo"></div>
-          <br>
-          <br>
-          <div>
-            idvideo:
-            <input type="text" id="idvideo">
-          </div>
+        <br>
+        <br> Blocknumber:
+        <div id="blocknumber"></div>
+        <br> Total videos in contract:
+        <div id="totalvidoes"></div>
+        <br>
+        <h3>Current videos</h3>
+        <table id="videosinfo" border="1">
+        </table>
+        
+        <h3>Add new video</h3>
 
-          <div>
-            secret Key:
-            <input type="text" id="secretkey">
-          </div>
-          <div>
-            releaseDate:
-            <input type="text" id="releasedate">
-          </div>
+        
+        <div class="form-group">
+          <label for="idvideo">idvideo</label>
+          <input type="text" class="form-control" id="idvideo" >
+        </div>
 
-          <div>
-            Amount ether:
-            <input type="text" id="amounteth" value="1000000000000000000">
-          </div>
+        <div class="form-group">
+          <label for="secretkey">secret key</label>
+          <input type="text" class="form-control" id="secretkey">
+        </div>
+      
+        <div class="form-group">
+          <label for="releasedate">release date</label>
+          <input type="text" class="form-control" id="releasedate">
+        </div>
 
-          <div>
-            <button onclick="uploadVideo()">upload Video</button>
-          </div>
-          <div>
-            <button onclick="getVideoAttributesClientside()">get Video Attributes Clientside</button>
-          </div>
-          <div>
-            <button onclick="getVideoAttributesServerside()">get Video Attributes Serverside</button>
-          </div>
-          <div>
-            <button onclick="releaseVideo()">Release Video</button>
-          </div>
+        <div class="form-group">
+          <label for="amounteth">amount ethereum</label>
+          <input type="text" class="form-control" id="amounteth" value="1000000000000000">
+        </div>
 
-
-
+        <button class="btn btn-primary" onclick="uploadVideoClientside()">upload Video Clientside</button>
+        <button class="btn" onclick="uploadVideoServerside()">upload Video Serverside</button>
+          
     </div>
-
 
     <%- include('partials/footer'); -%>
 

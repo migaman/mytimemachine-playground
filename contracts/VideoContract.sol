@@ -26,6 +26,8 @@ contract VideoContract {
     //mapping(uint => Video[]) public videos;
     Video[] public videos;
 
+    uint[] public videoIds;
+
     // Constructor (code runs only when the contract is created)
     constructor() public {
         //msg.address = where the current (external) function call came from
@@ -45,7 +47,7 @@ contract VideoContract {
 	//msg.value contains the ether
     function addVideo(uint _id, bytes32 _secretKey, uint _releasedatetime) public payable returns (bool videoAccepted){
         //Accept only payments higher than one other
-        if(msg.value >= 1 ether) {
+        if(msg.value >= 0.001 ether) {
             
             // Compute an estimation of the release time in blocks
             uint64 releaseEndBlock = uint64((5 minutes / secondsPerBlock) + block.number);
@@ -62,6 +64,7 @@ contract VideoContract {
                 authorAddress: msg.sender,
                 releaseBlock: releaseEndBlock
             });
+            videoIds.push(_id);
             
             return true;    
            
@@ -78,6 +81,11 @@ contract VideoContract {
         Video memory video = getVideo(_id);
         bool isAvailable = isVideoAvailable(_id);
         return (video.id, video.secretKey, video.releasedatetime, video.releaseBlock, video.value, video.authorAddress, isAvailable);
+    }
+
+
+    function getVideoIds() public view returns (uint[]) {
+        return videoIds;
     }
 
     
@@ -113,6 +121,8 @@ contract VideoContract {
         secondsPerBlock = secs;
     }
 
+    
+
 
     /**************
     private  functions
@@ -139,9 +149,11 @@ contract VideoContract {
             }
         }
     }
-    
-    
 
+    
+    function getTotalVideos() public view returns(uint) {
+        return numVideos;
+    }
     
     function getBlockNumber () public view  returns(uint) {
         return block.number;

@@ -3,46 +3,34 @@
 var videoContract;
 
 $(document).ready(function () {
-	var version = 0;
-	web3 = new Web3(web3.currentProvider);
+	$.getJSON('/api/video/blocknumber', function (blocknumber) {
+		$('#blocknumber').text(blocknumber);
 
+	});
+
+	$.getJSON('/api/video/total', function (totalVideos) {
+		$('#totalvidoes').text(totalVideos);
+
+	});
+
+	$.getJSON('/api/videos', function (result) {
+		buildHtmlTable('#videosinfo', result);
+	});
+
+});
+
+
+function uploadVideoClientside() {
+	var idvideo = $('#idvideo').val();
+	var secretKey = $('#secretkey').val();
+	var releaseDate = $('#releasedate').val();
+	var ether = $('#amounteth').val();
+
+	web3 = new Web3(web3.currentProvider);
 	//Check if connected to node
 	if (!web3.isConnected()) {
 		console.log("you are not connected");
 	}
-
-	version = web3.version.api;
-	console.log("version :" + version); // "0.2.0"
-
-	web3.version.getNode(function (error, result) {
-		if (!error) {
-			console.log("node: " + result)
-		}
-		else {
-			console.error(error);
-		}
-	});
-
-	web3.version.getNetwork(function (error, result) {
-		if (!error) {
-			console.log("network: " + result)
-		}
-		else {
-			console.error(error);
-		}
-	});
-
-	web3.version.getEthereum(function (error, result) {
-		if (!error) {
-			console.log("version ethereum: " + result)
-		}
-		else {
-			console.error(error);
-		}
-	});
-
-
-
 
 	var firstAccount = web3.eth.accounts[0];
 	console.log("First account address: " + firstAccount);
@@ -54,8 +42,6 @@ $(document).ready(function () {
 		else {
 			console.error(error);
 		}
-
-
 	});
 
 
@@ -66,67 +52,38 @@ $(document).ready(function () {
 		else {
 			console.error(error);
 		}
-
-
 	});
-
-
-
-
 
 	$.getJSON("contracts/VideoContract.json", function (jsonContract) {
 		var videoABI = web3.eth.contract(jsonContract.abi);
 		videoContract = videoABI.at(local_address);
 		console.log("contract loaded");
 
-		videoContract.getBlockNumber(function (error, result) {
+		videoContract.addVideo(idvideo, secretKey, releaseDate, { from: web3.eth.accounts[0], value: ether }, function (error, result) {
 			if (!error) {
-				console.log("Blocknumber: " + result)
-				$('#blocknumber').text(result);
+				console.log("Upload video: " + result)
 			}
-			else
+			else {
 				console.error(error);
+			}
 		});
+
 
 	});
 
-});
 
+}
 
-function uploadVideo() {
+function uploadVideoServerside() {
+	alert("todo!!");
 	var idvideo = $('#idvideo').val();
 	var secretKey = $('#secretkey').val();
 	var releaseDate = $('#releasedate').val();
 	var ether = $('#amounteth').val();
 
-	videoContract.addVideo(idvideo, secretKey, releaseDate, { from: web3.eth.accounts[0], value: ether }, function (error, result) {
-		if (!error) {
-			console.log("Upload video: " + result)
-		}
-		else {
-			console.error(error);
-		}
-	});
+	//TODO....
 }
 
-
-function getVideoAttributesClientside() {
-
-	var idvideo = $('#idvideo').val();
-
-	videoContract.getVideoAttributes(idvideo, function (error, result) {
-		if (!error) {
-			$('#videoinfo').html("id: " + result[0] + "<br>secretKey:" + result[1] +
-				"<br>releaseDateTime:" + result[2] + "<br>releaseBlock:" + result[3] +
-				"<br>ETH value:" + result[4] + "<br>Author Address:" + result[5] +
-				"<br>available:" + result[6]);
-
-		}
-		else {
-			console.error(error);
-		}
-	});
-}
 
 
 function getVideoAttributesServerside() {
@@ -142,10 +99,43 @@ function getVideoAttributesServerside() {
 }
 
 
-function releaseVideo() {
-	var idvideo = $('#idvideo').val();
-	console.log("todo!!" + idvideo);
 
+
+
+
+// Builds the HTML Table out of myList.
+function buildHtmlTable(selector, myList) {
+	var columns = addAllColumnHeaders(myList, selector);
+
+	for (var i = 0; i < myList.length; i++) {
+		var row$ = $('<tr/>');
+		for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+			var cellValue = myList[i][columns[colIndex]];
+			if (cellValue == null) cellValue = "";
+			row$.append($('<td/>').html(cellValue));
+		}
+		$(selector).append(row$);
+	}
 }
 
+// Adds a header row to the table and returns the set of columns.
+// Need to do union of keys from all records as some records may not contain
+// all records.
+function addAllColumnHeaders(myList, selector) {
+	var columnSet = [];
+	var headerTr$ = $('<tr/>');
+
+	for (var i = 0; i < myList.length; i++) {
+		var rowHash = myList[i];
+		for (var key in rowHash) {
+			if ($.inArray(key, columnSet) == -1) {
+				columnSet.push(key);
+				headerTr$.append($('<th/>').html(key));
+			}
+		}
+	}
+	$(selector).append(headerTr$);
+
+	return columnSet;
+}
 

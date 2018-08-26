@@ -63,10 +63,9 @@ app.get('/', function (req, res) {
   req.flash('info', 'This is a flash info message using the express-flash module.');
   req.flash('error', 'This is a flash error message using the express-flash module.');
   req.flash('success', 'This is a flash success message using the express-flash module.');
+  log.info("http header User-Agent: " + req.header('User-Agent'));
   res.render('index', { title: 'Example Page', address: EXAMPLE_ADDRESS, releaseversion: VERSION });
 });
-
-
 
 
 var port = process.env.PORT || 3000;

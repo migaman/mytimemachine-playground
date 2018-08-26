@@ -1,6 +1,8 @@
 {
 	"search.exclude": {
-		"**/static/javascripts": true,
+		"**/static/javascripts/jquery-3.3.1.min.js": true,
+		"**/static/javascripts/web3.js": true,
+		"**/static/javascripts/web3.min.js": true,
 		"**/static/stylesheets": true,
 		"**/static/webfonts": true,
 	},

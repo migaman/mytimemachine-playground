@@ -7,5 +7,12 @@ module.exports = function (app) {
 
 	app.route('/api/videos/:videoId')
 		.get(videoList.list);
+
+	app.route('/api/video/total')
+		.get(videoList.total);
+
+
+	app.route('/api/video/blocknumber')
+		.get(videoList.blocknumber);
 };
 
