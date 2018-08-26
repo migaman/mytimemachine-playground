@@ -13,7 +13,6 @@ var videoContract = videoABI.at(EXAMPLE_ADDRESS);
 
 
 exports.blocknumber = function (req, res) {
-	console.log("videoco" + videoContract);
 	videoContract.getBlockNumber(function (err, result) {
 		if (!err) {
 			res.json(result);
