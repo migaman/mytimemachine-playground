@@ -9,7 +9,29 @@ var jsonContract = require.main.require('./build/contracts/VideoContract.json');
 const EXAMPLE_ADDRESS = process.env.EXAMPLE_CONTRACT_ADDRESS || '0xca4b024f3f7279534ccb5dc4a528c46afa79eed3';
 var videoABI = web3.eth.contract(jsonContract.abi);
 var videoContract = videoABI.at(EXAMPLE_ADDRESS);
+var fs = require('fs');
+var ipfsapi = require('ipfs-api');
 
+exports.addipfs = function (req, res) {
+
+	//req.file.buffer is always undefined. Should work according to docs
+	//var buffer = req.file.buffer;
+
+	var buffer = fs.readFileSync(req.file.path);
+	var ipfs = new ipfsapi({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+
+	ipfs.add(buffer, (err, ipfsHash) => {
+		if (!err) {
+			res.json(ipfsHash);
+		}
+		else {
+			console.error(err);
+			res.send(err);
+		}
+	});
+
+
+};
 
 
 exports.blocknumber = function (req, res) {
@@ -109,6 +131,7 @@ function getVideo(idvideo, callback) {
 			video.ethValue = Number(result[4]);
 			video.authorAddress = result[5];
 			video.isAvailable = Boolean(result[6]);
+			video.ipfsHash = result[7];
 
 			// error is the first argument
 			callback(null, video);

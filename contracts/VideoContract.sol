@@ -14,6 +14,7 @@ contract VideoContract {
         uint64 releaseBlock; //release Block of the video
         uint value;
         address authorAddress; //address of video uploader
+        string ipfsHash; //link to the video file
     }
 
     uint numVideos = 0;
@@ -45,7 +46,7 @@ contract VideoContract {
 
 
 	//msg.value contains the ether
-    function addVideo(uint _id, bytes32 _secretKey, uint _releasedatetime) public payable returns (bool videoAccepted){
+    function addVideo(uint _id, bytes32 _secretKey, uint _releasedatetime, string _ipfsHash) public payable returns (bool videoAccepted){
         //Accept only payments higher than one other
         if(msg.value >= 0.001 ether) {
             
@@ -62,7 +63,8 @@ contract VideoContract {
                 releasedatetime: _releasedatetime,
                 value: msg.value,
                 authorAddress: msg.sender,
-                releaseBlock: releaseEndBlock
+                releaseBlock: releaseEndBlock,
+                ipfsHash: _ipfsHash
             });
             videoIds.push(_id);
             
@@ -77,10 +79,11 @@ contract VideoContract {
 
     }
 
-    function getVideoAttributes(uint _id) public view returns (uint, bytes32, uint, uint64, uint, address, bool) {
+    function getVideoAttributes(uint _id) public view returns (uint, bytes32, uint, uint64, uint, address, bool, string) {
         Video memory video = getVideo(_id);
         bool isAvailable = isVideoAvailable(_id);
-        return (video.id, video.secretKey, video.releasedatetime, video.releaseBlock, video.value, video.authorAddress, isAvailable);
+        return (video.id, video.secretKey, video.releasedatetime, video.releaseBlock, 
+            video.value, video.authorAddress, isAvailable, video.ipfsHash);
     }
 
 

@@ -1,18 +1,24 @@
 'use strict';
 module.exports = function (app) {
-	var videoList = require.main.require('./api/controllers/videocontroller');
+	var videoController = require.main.require('./api/controllers/videocontroller');
+	var multer = require('multer');
+	var upload = multer({ dest: 'uploads/' })
 
 	app.route('/api/videos')
-		.get(videoList.list_all);
+		.get(videoController.list_all);
 
 	app.route('/api/videos/:videoId')
-		.get(videoList.list);
+		.get(videoController.list);
 
 	app.route('/api/video/total')
-		.get(videoList.total);
-
+		.get(videoController.total);
 
 	app.route('/api/video/blocknumber')
-		.get(videoList.blocknumber);
+		.get(videoController.blocknumber);
+
+	//POST 
+	app.route('/api/video/ipfs')
+		.post(upload.single('videofile'), videoController.addipfs);
+
 };
 

@@ -9,7 +9,8 @@ var videomodel = new schemaObject({
 	releaseBlock: Number,
 	ethValue: Number,
 	authorAddress: String,
-	isAvailable: Boolean
+	isAvailable: Boolean,
+	ipfsHash: String
 });
 
 module.exports = videomodel;

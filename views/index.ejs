@@ -26,29 +26,41 @@
         
         <h3>Add new video</h3>
 
+
         
         <div class="form-group">
           <label for="idvideo">idvideo</label>
-          <input type="text" class="form-control" id="idvideo" >
+          <input type="text" class="form-control" id="idvideo" name="idvideo" >
         </div>
 
         <div class="form-group">
           <label for="secretkey">secret key</label>
-          <input type="text" class="form-control" id="secretkey">
+          <input type="text" class="form-control" id="secretkey" name="secretkey">
         </div>
       
         <div class="form-group">
           <label for="releasedate">release date</label>
-          <input type="text" class="form-control" id="releasedate">
+          <input type="text" class="form-control" id="releasedate" name="releasedate">
         </div>
 
         <div class="form-group">
           <label for="amounteth">amount ethereum</label>
-          <input type="text" class="form-control" id="amounteth" value="1000000000000000">
+          <input type="text" class="form-control" id="amounteth" name="amounteth" value="1000000000000000">
+        </div>
+        
+        <div class="form-group">
+          <label for="filename">Choose file to send to IPFS</label>
+          <input type = "file" class="form-control-file" id="filename" name="filename">
+        </div>
+
+        <div id="progress-wrp">
+          <div class="progress-bar"></div>
+          <div class="status">0%</div>
         </div>
 
         <button class="btn btn-primary" onclick="uploadVideoClientside()">upload Video Clientside</button>
         <button class="btn" onclick="uploadVideoServerside()">upload Video Serverside</button>
+         
           
     </div>
 

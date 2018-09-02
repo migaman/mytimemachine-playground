@@ -1,6 +1,74 @@
 'use strict';
 
 var videoContract;
+var myfile;
+
+var Upload = function (file) {
+	this.file = file;
+};
+
+Upload.prototype.getType = function () {
+	return this.file.type;
+};
+Upload.prototype.getSize = function () {
+	return this.file.size;
+};
+Upload.prototype.getName = function () {
+	return this.file.name;
+};
+Upload.prototype.doUpload = function () {
+	var that = this;
+	var formData = new FormData();
+
+	// add assoc key values, this will be posts values
+	formData.append("videofile", this.file);
+
+	$.ajax({
+		type: "POST",
+		url: "/api/video/ipfs",
+		xhr: function () {
+			var myXhr = $.ajaxSettings.xhr();
+			if (myXhr.upload) {
+				myXhr.upload.addEventListener('progress', that.progressHandling, false);
+			}
+			return myXhr;
+		},
+		success: function (data) {
+			// your callback here
+			console.log("return json:" + JSON.stringify(data));
+			var ipfsHash = data[0].hash;
+			console.log("hash:" + ipfsHash);
+
+			//Nun in Vertrag speichern mit erhaltenem hash
+			uploadVideoClient(ipfsHash);
+		},
+		error: function (error) {
+			// handle error
+			console.error('Error occured ajax post' + error);
+		},
+		async: true,
+		data: formData,
+		cache: false,
+		contentType: false,
+		processData: false,
+		crossDomain: true,
+		timeout: 60000
+	});
+
+};
+
+Upload.prototype.progressHandling = function (event) {
+	var percent = 0;
+	var position = event.loaded || event.position;
+	var total = event.total;
+	var progress_bar_id = "#progress-wrp";
+	if (event.lengthComputable) {
+		percent = Math.ceil(position / total * 100);
+	}
+	// update progressbars classes so it fits your code
+	$(progress_bar_id + " .progress-bar").css("width", +percent + "%");
+	$(progress_bar_id + " .status").text(percent + "%");
+};
 
 $(document).ready(function () {
 	$.getJSON('/api/video/blocknumber', function (blocknumber) {
@@ -17,14 +85,26 @@ $(document).ready(function () {
 		buildHtmlTable('#videosinfo', result);
 	});
 
+
+	//save file in global variable for upload
+	$("#filename").on("change", function (e) {
+		myfile = $(this)[0].files[0];
+	});
+
 });
 
 
 function uploadVideoClientside() {
+	var upload = new Upload(myfile);
+	upload.doUpload();
+}
+
+function uploadVideoClient(ipfsHash) {
 	var idvideo = $('#idvideo').val();
 	var secretKey = $('#secretkey').val();
 	var releaseDate = $('#releasedate').val();
 	var ether = $('#amounteth').val();
+
 
 	web3 = new Web3(web3.currentProvider);
 	//Check if connected to node
@@ -59,7 +139,7 @@ function uploadVideoClientside() {
 		videoContract = videoABI.at(local_address);
 		console.log("contract loaded");
 
-		videoContract.addVideo(idvideo, secretKey, releaseDate, { from: web3.eth.accounts[0], value: ether }, function (error, result) {
+		videoContract.addVideo(idvideo, secretKey, releaseDate, ipfsHash, { from: web3.eth.accounts[0], value: ether }, function (error, result) {
 			if (!error) {
 				console.log("Upload video: " + result)
 			}
@@ -71,8 +151,8 @@ function uploadVideoClientside() {
 
 	});
 
-
 }
+
 
 function uploadVideoServerside() {
 	alert("todo!!");
@@ -84,8 +164,7 @@ function uploadVideoServerside() {
 	//TODO....
 }
 
-
-
+//not used currently... details of video
 function getVideoAttributesServerside() {
 	var idvideo = $('#idvideo').val();
 	// jQuery AJAX call for JSON
@@ -93,13 +172,12 @@ function getVideoAttributesServerside() {
 		$('#videoinfo').html("id: " + jsonVideo.idvideo + "<br>secretKey:" + jsonVideo.secretKey +
 			"<br>releaseDateTime:" + jsonVideo.releaseDateTime + "<br>releaseBlock:" + jsonVideo.releaseBlock +
 			"<br>ETH value:" + jsonVideo.ethValue + "<br>Author Address:" + jsonVideo.authorAddress +
-			"<br>available:" + jsonVideo.isAvailable);
+			"<br>available:" + jsonVideo.isAvailable +
+			"<br>available:" + jsonVideo.ipfsHash
+		);
 	});
 
 }
-
-
-
 
 
 
@@ -112,7 +190,14 @@ function buildHtmlTable(selector, myList) {
 		for (var colIndex = 0; colIndex < columns.length; colIndex++) {
 			var cellValue = myList[i][columns[colIndex]];
 			if (cellValue == null) cellValue = "";
-			row$.append($('<td/>').html(cellValue));
+			if (colIndex == 7) {
+				cellValue = '<a href="https://ipfs.io/ipfs/' + cellValue + '">' + cellValue + '</a>';
+				row$.append($('<td/>').html(cellValue));
+			}
+			else {
+				row$.append($('<td/>').html(cellValue));
+			}
+
 		}
 		$(selector).append(row$);
 	}
