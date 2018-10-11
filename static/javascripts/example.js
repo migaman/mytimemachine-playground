@@ -99,12 +99,32 @@ function uploadVideoClientside() {
 	if (typeof (web3) === "undefined") {
 		message = "Unable to find web3. " +
 			"Please run MetaMask (or something else that injects web3).";
+		console.log(message);
 		alert(message);
 	}
 	else {
-		console.log("start lcient side");
-		var upload = new Upload(myfile);
-		upload.doUpload();
+		console.log("Web3 is defined...");
+		if (web3.isConnected()) {
+			console.log("Web3 is connected...");
+
+			var accounts = web3.eth.accounts;
+			if (accounts.length > 0) {
+				console.log("web3 accounts available");
+				var upload = new Upload(myfile);
+				upload.doUpload();
+			}
+			else {
+				message = "web3 accounts not available";
+				console.log(message);
+				alert(message);
+			}
+
+		}
+		else {
+			message = "Web3 is not connected. Please connect it.";
+			console.log(message);
+			alert(message);
+		}
 	}
 }
 
