@@ -95,8 +95,17 @@ $(document).ready(function () {
 
 
 function uploadVideoClientside() {
-	var upload = new Upload(myfile);
-	upload.doUpload();
+	var message = "";
+	if (typeof (web3) === "undefined") {
+		message = "Unable to find web3. " +
+			"Please run MetaMask (or something else that injects web3).";
+		alert(message);
+	}
+	else {
+		console.log("start lcient side");
+		var upload = new Upload(myfile);
+		upload.doUpload();
+	}
 }
 
 function uploadVideoClient(ipfsHash) {
@@ -110,6 +119,7 @@ function uploadVideoClient(ipfsHash) {
 	//Check if connected to node
 	if (!web3.isConnected()) {
 		console.log("you are not connected");
+		error("you are not connected");
 	}
 
 	var firstAccount = web3.eth.accounts[0];
