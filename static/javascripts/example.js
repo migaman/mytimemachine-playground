@@ -16,7 +16,7 @@ Upload.prototype.getSize = function () {
 Upload.prototype.getName = function () {
 	return this.file.name;
 };
-Upload.prototype.doUpload = function () {
+Upload.prototype.doUpload = function (clientside) {
 	var that = this;
 	var formData = new FormData();
 
@@ -40,7 +40,13 @@ Upload.prototype.doUpload = function () {
 			console.log("hash:" + ipfsHash);
 
 			//Nun in Vertrag speichern mit erhaltenem hash
-			uploadVideoClient(ipfsHash);
+			if (clientside) {
+				uploadVideoClient(ipfsHash);
+			}
+			else {
+				uploadVideoServer(ipfsHash);
+			}
+
 		},
 		error: function (error) {
 			// handle error
@@ -111,7 +117,7 @@ function uploadVideoClientside() {
 			if (accounts.length > 0) {
 				console.log("web3 accounts available");
 				var upload = new Upload(myfile);
-				upload.doUpload();
+				upload.doUpload(true);
 			}
 			else {
 				message = "web3 accounts not available";
@@ -133,7 +139,6 @@ function uploadVideoClient(ipfsHash) {
 	var secretKey = $('#secretkey').val();
 	var releaseDate = $('#releasedate').val();
 	var ether = $('#amounteth').val();
-
 
 	web3 = new Web3(web3.currentProvider);
 	//Check if connected to node
@@ -185,13 +190,34 @@ function uploadVideoClient(ipfsHash) {
 
 
 function uploadVideoServerside() {
-	alert("todo!!");
+	var upload = new Upload(myfile);
+	upload.doUpload(false);
+}
+
+function uploadVideoServer(ipfsHash) {
 	var idvideo = $('#idvideo').val();
 	var secretKey = $('#secretkey').val();
 	var releaseDate = $('#releasedate').val();
 	var ether = $('#amounteth').val();
 
-	//TODO....
+	// Form fields, see IDs above
+	const params = {
+		idvideo: idvideo,
+		secretKey: secretKey,
+		releaseDate: releaseDate,
+		ether: ether,
+		ipfsHash: ipfsHash
+	}
+
+	const http = new XMLHttpRequest()
+	http.open('POST', '/api/video/uploadvideo')
+	http.setRequestHeader('Content-type', 'application/json')
+	http.send(JSON.stringify(params)) // Make sure to stringify
+	http.onload = function () {
+		console.log("Transaction Hash: " + http.responseText);
+
+
+	}
 }
 
 //not used currently... details of video
@@ -254,9 +280,3 @@ function addAllColumnHeaders(myList, selector) {
 	return columnSet;
 }
 
-
-function incrementVideosServerside() {
-	$.getJSON('/api/video/incrementcounter', function (transactionHash) {
-		console.log("Counter incremented: " + transactionHash);
-	});
-}

@@ -81,7 +81,7 @@ exports.list = function (req, res) {
 
 
 //Lists all videos in contract
-exports.list_all = function (req, res) {
+exports.listall = function (req, res) {
 	var videos = [];
 	videoContract.methods.getVideoIds().call(function (err, result) {
 		if (!err) {
@@ -145,25 +145,33 @@ function getVideo(idvideo, callback) {
 }
 
 
-exports.incrementcounter = function (req, res) {
+exports.uploadvideo = function (req, res) {
+	var idvideo = req.body.idvideo;
+	var secretKey = web3.utils.fromAscii(req.body.secretKey);
+	var releasedatetime = req.body.releaseDate;
+	var ipfsHash = req.body.ipfsHash;
+	//use fixed ether instead of parameter 
+	//var ether = req.body.ether;
 
 	var address = EXAMPLE_CONTRACT_ADDRESS;
 	var account = EXAMPLE_ACCOUNT;
 
 	web3.eth.getTransactionCount(account, function (err, nonce) {
 
-		var data = videoContract.methods.incrementVideos().encodeABI();
+		var data = videoContract.methods.addVideo(idvideo, secretKey, releasedatetime, ipfsHash).encodeABI();
 		var gasPrice = web3.utils.toHex(web3.utils.toWei('20', 'gwei'));
+		var etherPrice = web3.utils.toHex(web3.utils.toWei('0.1', 'ether'));
 
 		const txParams = {
 			nonce: nonce,
 			gasPrice: gasPrice,
 			gasLimit: web3.utils.toHex(250000),
 			to: address,
-			value: '0x00',
+			value: etherPrice,
 			data: data,
 			chainId: '*'
 		}
+
 
 		const tx = new EthereumTx(txParams);
 		const privateKey = Buffer.from(EXAMPLE_PRIVATEKEY, 'hex')

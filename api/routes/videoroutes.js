@@ -5,7 +5,7 @@ module.exports = function (app) {
 	var upload = multer({ dest: 'uploads/' })
 
 	app.route('/api/videos')
-		.get(videoController.list_all);
+		.get(videoController.listall);
 
 	app.route('/api/videos/:videoId')
 		.get(videoController.list);
@@ -16,10 +16,12 @@ module.exports = function (app) {
 	app.route('/api/video/blocknumber')
 		.get(videoController.blocknumber);
 
-	app.route('/api/video/incrementcounter')
-		.get(videoController.incrementcounter);
 
 	//POST 
+	app.post('/api/video/uploadvideo', function (req, res) {
+		videoController.uploadvideo(req, res);
+	});
+
 	app.route('/api/video/ipfs')
 		.post(upload.single('videofile'), videoController.addipfs);
 
