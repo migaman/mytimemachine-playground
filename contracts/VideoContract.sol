@@ -153,6 +153,11 @@ contract VideoContract {
         }
     }
 
+
+    function incrementVideos() public payable returns (uint) {
+        numVideos++;
+        return numVideos;
+    }
     
     function getTotalVideos() public view returns(uint) {
         return numVideos;

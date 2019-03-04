@@ -16,6 +16,9 @@ module.exports = function (app) {
 	app.route('/api/video/blocknumber')
 		.get(videoController.blocknumber);
 
+	app.route('/api/video/incrementcounter')
+		.get(videoController.incrementcounter);
+
 	//POST 
 	app.route('/api/video/ipfs')
 		.post(upload.single('videofile'), videoController.addipfs);

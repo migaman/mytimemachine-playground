@@ -254,3 +254,9 @@ function addAllColumnHeaders(myList, selector) {
 	return columnSet;
 }
 
+
+function incrementVideosServerside() {
+	$.getJSON('/api/video/incrementcounter', function (transactionHash) {
+		console.log("Counter incremented: " + transactionHash);
+	});
+}

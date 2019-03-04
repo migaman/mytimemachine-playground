@@ -7,9 +7,13 @@ var httpProvider = process.env.WEB3_HTTP_PROVIDER_SERVERSIDE;
 var web3 = new Web3(new Web3.providers.HttpProvider(httpProvider));
 var jsonContract = require.main.require('./build/contracts/VideoContract.json');
 const EXAMPLE_CONTRACT_ADDRESS = process.env.EXAMPLE_CONTRACT_ADDRESS || '0xca4b024f3f7279534ccb5dc4a528c46afa79eed3';
+const EXAMPLE_ACCOUNT = process.env.EXAMPLE_ACCOUNT || '0xCaea01B825cDf94A362533853320FF173D221B8d';
+const EXAMPLE_PRIVATEKEY = process.env.EXAMPLE_PRIVATEKEY || 'd1c20ac3cd7471ca2a6e43bdaa84e4e73b7f4713f8f174c6257639da8e2e9aa7';
 var videoContract = new web3.eth.Contract(jsonContract.abi, EXAMPLE_CONTRACT_ADDRESS);
 var fs = require('fs');
 var ipfsapi = require('ipfs-api');
+var EthereumTx = require('ethereumjs-tx')
+
 
 exports.addipfs = function (req, res) {
 	//req.file.buffer is always undefined. Should work according to docs
@@ -139,3 +143,46 @@ function getVideo(idvideo, callback) {
 		}
 	});
 }
+
+
+exports.incrementcounter = function (req, res) {
+
+	var address = EXAMPLE_CONTRACT_ADDRESS;
+	var account = EXAMPLE_ACCOUNT;
+
+	web3.eth.getTransactionCount(account, function (err, nonce) {
+
+		var data = videoContract.methods.incrementVideos().encodeABI();
+		var gasPrice = web3.utils.toHex(web3.utils.toWei('20', 'gwei'));
+
+		const txParams = {
+			nonce: nonce,
+			gasPrice: gasPrice,
+			gasLimit: web3.utils.toHex(250000),
+			to: address,
+			value: '0x00',
+			data: data,
+			chainId: '*'
+		}
+
+		const tx = new EthereumTx(txParams);
+		const privateKey = Buffer.from(EXAMPLE_PRIVATEKEY, 'hex')
+		tx.sign(privateKey);
+		var raw = '0x' + tx.serialize().toString('hex');
+
+		web3.eth.sendSignedTransaction(raw, function (err, transactionHash) {
+			if (!err) {
+				res.json(transactionHash);
+			}
+			else {
+				//throw err; // Check for the error and throw if it exists.
+				console.error(err);
+				res.send(err);
+			}
+		})
+
+	});
+
+
+
+};
